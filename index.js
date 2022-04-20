@@ -3,7 +3,8 @@ const secrets = require("./secrets.json");
 
 const endpoint = "https://api.github.com/graphql";
 const accessToken = secrets.github.personalAccessToken;
-const literal = gotql.literal;
+
+const MAX_FIRST = 100;
 
 const node = {
   node: {
@@ -27,7 +28,10 @@ const edges = {
 const repositories = {
   repositories: {
     args: {
-      first: literal`10`,
+      first: {
+        value: MAX_FIRST,
+        escape: false,
+      },
     },
     fields: [
       edges,
@@ -60,6 +64,7 @@ function printRepositories(response) {
       .repositories
       .edges;
     console.log(edges);
+    console.log(edges.length);
   } else {
     console.log(response);
   }
