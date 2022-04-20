@@ -53,12 +53,16 @@ const options = {
 };
 
 function printRepositories(response) {
-  var edges = response
-    .data
-    .viewer
-    .repositories
-    .edges;
-  console.log(edges);
+  if (response.data) {
+    var edges = response
+      .data
+      .viewer
+      .repositories
+      .edges;
+    console.log(edges);
+  } else {
+    console.log(response);
+  }
 }
 
 gotql.query(endpoint, query, options)
