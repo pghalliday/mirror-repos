@@ -14,6 +14,11 @@ export class ListOrganizationRepositories extends List<Repository> {
     }
 
     public query(organization: string): Observable<Repository> {
-        return super.query("organization", {login: organization}, "repositories", REPOSITORY_FIELDS);
+        return super.query(
+            "organization",
+            {login: organization},
+            "repositories",
+            REPOSITORY_FIELDS,
+        );
     }
 }

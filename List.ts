@@ -30,7 +30,11 @@ function edgesField(objectFields: readonly string[]): FieldObject {
     };
 }
 
-function requestedField(requested: string, objectFields: readonly string[], cursor: string | ArgObject): FieldObject {
+function requestedField(
+    requested: string,
+    objectFields: readonly string[],
+    cursor: string | ArgObject,
+): FieldObject {
     return {
         [requested]: {
             args: {
@@ -47,7 +51,13 @@ function requestedField(requested: string, objectFields: readonly string[], curs
     };
 }
 
-function baseOperation(base: string, baseArgs: Record<string, string | ArgObject>, requested: string, objectFields: readonly string[], cursor: string | ArgObject): QueryOperation {
+function baseOperation(
+    base: string,
+    baseArgs: Record<string, string | ArgObject>,
+    requested: string,
+    objectFields: readonly string[],
+    cursor: string | ArgObject,
+): QueryOperation {
     return {
         name: base,
         fields: [
@@ -57,7 +67,13 @@ function baseOperation(base: string, baseArgs: Record<string, string | ArgObject
     };
 }
 
-function getQuery(base: string, baseArgs: Record<string, string | ArgObject>, requested: string, objectFields: readonly string[], cursor: string | ArgObject): QueryType {
+function getQuery(
+    base: string,
+    baseArgs: Record<string, string | ArgObject>,
+    requested: string,
+    objectFields: readonly string[],
+    cursor: string | ArgObject,
+): QueryType {
     return {
         operation: baseOperation(base, baseArgs, requested, objectFields, cursor),
     };
@@ -78,7 +94,13 @@ export class List<ObjectType> {
         };
     }
 
-    private async notify(base: string, baseArgs: Record<string, string | ArgObject>, requested: string, objectFields: readonly string[], subscriber: Subscriber<ObjectType>): Promise<void> {
+    private async notify(
+        base: string,
+        baseArgs: Record<string, string | ArgObject>,
+        requested: string,
+        objectFields: readonly string[],
+        subscriber: Subscriber<ObjectType>,
+    ): Promise<void> {
         const options = this.getOptions();
         let hasMore = true;
         let cursor: string | ArgObject = NULL_ARG;
@@ -105,7 +127,12 @@ export class List<ObjectType> {
         }
     }
 
-    protected query(base: string, baseArgs: Record<string, string | ArgObject>, requested: string, objectFields: readonly string[]): Observable<ObjectType> {
+    protected query(
+        base: string,
+        baseArgs: Record<string, string | ArgObject>,
+        requested: string,
+        objectFields: readonly string[],
+    ): Observable<ObjectType> {
         return new Observable<ObjectType>(subscriber => {
             this.notify(base, baseArgs, requested, objectFields, subscriber)
                 .catch(subscriber.error.bind(subscriber));
