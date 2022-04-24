@@ -1,23 +1,16 @@
-export type Organization = {
-    readonly id: string,
-    readonly name: string,
-};
+export const ORGANIZATION_FIELDS = [
+    "id",
+    "name",
+] as const;
 
-export type Repository = {
-    readonly id: string,
-    readonly name: string,
-    readonly sshUrl: string,
-};
+export const REPOSITORY_FIELDS = [
+    "id",
+    "name",
+    "sshUrl",
+] as const;
 
-export type OrganizationEdge = {
-    cursor: string,
-    node: Organization,
-};
-
-export type RepositoryEdge = {
-    cursor: string,
-    node: Repository,
-};
+export interface Organization extends Readonly<Record<typeof ORGANIZATION_FIELDS[number], string>> {}
+export interface Repository extends Readonly<Record<typeof REPOSITORY_FIELDS[number], string>> {}
 
 export type GraphQLError = {
     path: string[],
@@ -33,24 +26,18 @@ export type GraphQLError = {
     message: string,
 };
 
-export type OrganizationsQueryResponse = {
-    data?: {
-        viewer: {
-            organizations: {
-                edges: OrganizationEdge[],
-            },
-        },
-    },
-    errors?: GraphQLError[],
+export type GraphQLEdge<ObjectType> = {
+    cursor: string,
+    node: ObjectType,
 };
 
-export type RepositoriesQueryResponse = {
+export type GraphQLEdges<ObjectType> = {
+    edges: GraphQLEdge<ObjectType>[],
+};
+
+export type GraphQLResponse<ObjectType> = {
     data?: {
-        viewer: {
-            repositories: {
-                edges: RepositoryEdge[],
-            },
-        },
+        viewer: Record<string, GraphQLEdges<ObjectType>>,
     },
     errors?: GraphQLError[],
 };
