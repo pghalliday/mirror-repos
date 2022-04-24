@@ -1,7 +1,17 @@
+export type Organization = {
+    readonly id: string,
+    readonly name: string,
+};
+
 export type Repository = {
     readonly id: string,
     readonly name: string,
     readonly sshUrl: string,
+};
+
+export type OrganizationEdge = {
+    cursor: string,
+    node: Organization,
 };
 
 export type RepositoryEdge = {
@@ -21,6 +31,17 @@ export type GraphQLError = {
         column: number,
     }[],
     message: string,
+};
+
+export type OrganizationsQueryResponse = {
+    data?: {
+        viewer: {
+            organizations: {
+                edges: OrganizationEdge[],
+            },
+        },
+    },
+    errors?: GraphQLError[],
 };
 
 export type RepositoriesQueryResponse = {

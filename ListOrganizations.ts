@@ -2,7 +2,7 @@ import {inject, injectable} from "tsyringe";
 import {Observable, Subscriber} from "rxjs";
 import {ArgObject, FieldObject, QueryOperation, QueryType} from "gotql/dist/types/QueryType";
 import {UserOptions} from "gotql/dist/types/UserOptions";
-import {RepositoriesQueryResponse, Repository} from "./Types";
+import {Organization, OrganizationsQueryResponse} from "./Types";
 import { query } from "gotql";
 import {CONTAINER_SYMBOLS} from "./ContainerSymbols";
 
@@ -17,7 +17,6 @@ const NODE_FIELD: FieldObject = {
     node: {
         fields: [
             "id",
-            "sshUrl",
             "name",
         ],
     },
@@ -32,9 +31,9 @@ const EDGES_FIELD: FieldObject = {
     },
 };
 
-function repositoriesField(cursor: string | ArgObject): FieldObject {
+function organizationsField(cursor: string | ArgObject): FieldObject {
     return {
-        repositories: {
+        organizations: {
             args: {
                 first: {
                     value: MAX_FIRST,
@@ -53,19 +52,19 @@ function viewerOperation(cursor: string | ArgObject): QueryOperation {
     return {
         name: "viewer",
         fields: [
-            repositoriesField(cursor),
+            organizationsField(cursor),
         ],
     };
 }
 
-function getRepositoriesQuery(cursor: string | ArgObject): QueryType {
+function getOrganizationsQuery(cursor: string | ArgObject): QueryType {
     return {
         operation: viewerOperation(cursor),
     };
 }
 
 @injectable()
-export class ListRepositories {
+export class ListOrganizations {
     constructor(
         @inject(CONTAINER_SYMBOLS.githubEndpoint) private readonly endpoint: string,
         @inject(CONTAINER_SYMBOLS.githubAccessToken) private readonly accessToken: string,
@@ -80,36 +79,36 @@ export class ListRepositories {
         };
     }
 
-    private async notifyRepositories(subscriber: Subscriber<Repository>): Promise<void> {
+    private async notifyOrganizations(subscriber: Subscriber<Organization>): Promise<void> {
         const options = this.getOptions();
         let hasMore = true;
         let cursor: string | ArgObject = NULL_ARG;
         while (hasMore) {
             hasMore = false;
-            const response: RepositoriesQueryResponse = await query(this.endpoint, getRepositoriesQuery(cursor), options);
+            const response: OrganizationsQueryResponse = await query(this.endpoint, getOrganizationsQuery(cursor), options);
             if (response.errors !== undefined) {
                 subscriber.error(response.errors);
             } else if (response.data !== undefined) {
-                const repositoryEdges = response.data.viewer.repositories.edges;
-                const length = repositoryEdges.length;
+                const organizationEdges = response.data.viewer.organizations.edges;
+                const length = organizationEdges.length;
                 if (length > 0) {
                     hasMore = true;
-                    cursor = repositoryEdges[length - 1].cursor;
-                    for (const repositoryEdge of repositoryEdges) {
-                        subscriber.next(repositoryEdge.node);
+                    cursor = organizationEdges[length - 1].cursor;
+                    for (const organizationEdge of organizationEdges) {
+                        subscriber.next(organizationEdge.node);
                     }
                 } else {
                     subscriber.complete();
                 }
             } else {
-                subscriber.error("Neither data not errors returned from GraphQL query for repositories");
+                subscriber.error("Neither data not errors returned from GraphQL query for organizations");
             }
         }
     }
 
-    public query(): Observable<Repository> {
-        return new Observable<Repository>(subscriber => {
-            this.notifyRepositories(subscriber)
+    public query(): Observable<Organization> {
+        return new Observable<Organization>(subscriber => {
+            this.notifyOrganizations(subscriber)
                 .catch(subscriber.error.bind(subscriber));
         });
     }
