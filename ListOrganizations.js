@@ -19,7 +19,7 @@ let ListOrganizations = class ListOrganizations extends List_1.List {
         super(endpoint, accessToken);
     }
     query() {
-        return super.query("organizations", Types_1.ORGANIZATION_FIELDS);
+        return super.query("viewer", {}, "organizations", Types_1.ORGANIZATION_FIELDS);
     }
 };
 ListOrganizations = __decorate([

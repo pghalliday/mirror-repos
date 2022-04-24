@@ -9,22 +9,22 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ListRepositories = void 0;
+exports.ListOrganizationRepositories = void 0;
 const tsyringe_1 = require("tsyringe");
 const Types_1 = require("./Types");
 const ContainerSymbols_1 = require("./ContainerSymbols");
 const List_1 = require("./List");
-let ListRepositories = class ListRepositories extends List_1.List {
+let ListOrganizationRepositories = class ListOrganizationRepositories extends List_1.List {
     constructor(endpoint, accessToken) {
         super(endpoint, accessToken);
     }
-    query() {
-        return super.query("viewer", {}, "repositories", Types_1.REPOSITORY_FIELDS);
+    query(organization) {
+        return super.query("organization", { login: organization }, "repositories", Types_1.REPOSITORY_FIELDS);
     }
 };
-ListRepositories = __decorate([
+ListOrganizationRepositories = __decorate([
     (0, tsyringe_1.injectable)(),
     __param(0, (0, tsyringe_1.inject)(ContainerSymbols_1.CONTAINER_SYMBOLS.githubEndpoint)),
     __param(1, (0, tsyringe_1.inject)(ContainerSymbols_1.CONTAINER_SYMBOLS.githubAccessToken))
-], ListRepositories);
-exports.ListRepositories = ListRepositories;
+], ListOrganizationRepositories);
+exports.ListOrganizationRepositories = ListOrganizationRepositories;

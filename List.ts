@@ -47,18 +47,19 @@ function requestedField(requested: string, objectFields: readonly string[], curs
     };
 }
 
-function viewerOperation(requested: string, objectFields: readonly string[], cursor: string | ArgObject): QueryOperation {
+function baseOperation(base: string, baseArgs: Record<string, string | ArgObject>, requested: string, objectFields: readonly string[], cursor: string | ArgObject): QueryOperation {
     return {
-        name: "viewer",
+        name: base,
         fields: [
             requestedField(requested, objectFields, cursor),
         ],
+        args: baseArgs,
     };
 }
 
-function getQuery(requested: string, objectFields: readonly string[], cursor: string | ArgObject): QueryType {
+function getQuery(base: string, baseArgs: Record<string, string | ArgObject>, requested: string, objectFields: readonly string[], cursor: string | ArgObject): QueryType {
     return {
-        operation: viewerOperation(requested, objectFields, cursor),
+        operation: baseOperation(base, baseArgs, requested, objectFields, cursor),
     };
 }
 
@@ -77,17 +78,17 @@ export class List<ObjectType> {
         };
     }
 
-    private async notify(requested: string, objectFields: readonly string[], subscriber: Subscriber<ObjectType>): Promise<void> {
+    private async notify(base: string, baseArgs: Record<string, string | ArgObject>, requested: string, objectFields: readonly string[], subscriber: Subscriber<ObjectType>): Promise<void> {
         const options = this.getOptions();
         let hasMore = true;
         let cursor: string | ArgObject = NULL_ARG;
         while (hasMore) {
             hasMore = false;
-            const response: GraphQLResponse<ObjectType> = await query(this.endpoint, getQuery(requested, objectFields, cursor), options);
+            const response: GraphQLResponse<ObjectType> = await query(this.endpoint, getQuery(base, baseArgs, requested, objectFields, cursor), options);
             if (response.errors !== undefined) {
                 subscriber.error(response.errors);
             } else if (response.data !== undefined) {
-                const edges = response.data.viewer[requested].edges;
+                const edges = response.data[base][requested].edges;
                 const length = edges.length;
                 if (length > 0) {
                     hasMore = true;
@@ -104,9 +105,9 @@ export class List<ObjectType> {
         }
     }
 
-    public query(requested: string, objectFields: readonly string[]): Observable<ObjectType> {
+    protected query(base: string, baseArgs: Record<string, string | ArgObject>, requested: string, objectFields: readonly string[]): Observable<ObjectType> {
         return new Observable<ObjectType>(subscriber => {
-            this.notify(requested, objectFields, subscriber)
+            this.notify(base, baseArgs, requested, objectFields, subscriber)
                 .catch(subscriber.error.bind(subscriber));
         });
     }

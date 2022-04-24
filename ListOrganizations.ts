@@ -14,6 +14,6 @@ export class ListOrganizations extends List<Organization> {
     }
 
     public query(): Observable<Organization> {
-        return super.query("organizations", ORGANIZATION_FIELDS);
+        return super.query("viewer", {}, "organizations", ORGANIZATION_FIELDS);
     }
 }

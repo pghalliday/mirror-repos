@@ -36,8 +36,6 @@ export type GraphQLEdges<ObjectType> = {
 };
 
 export type GraphQLResponse<ObjectType> = {
-    data?: {
-        viewer: Record<string, GraphQLEdges<ObjectType>>,
-    },
+    data?: Record<string, Record<string, GraphQLEdges<ObjectType>>>,
     errors?: GraphQLError[],
 };

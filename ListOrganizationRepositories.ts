@@ -5,7 +5,7 @@ import {CONTAINER_SYMBOLS} from "./ContainerSymbols";
 import {List} from "./List";
 
 @injectable()
-export class ListRepositories extends List<Repository> {
+export class ListOrganizationRepositories extends List<Repository> {
     constructor(
         @inject(CONTAINER_SYMBOLS.githubEndpoint) endpoint: string,
         @inject(CONTAINER_SYMBOLS.githubAccessToken) accessToken: string,
@@ -13,7 +13,7 @@ export class ListRepositories extends List<Repository> {
         super(endpoint, accessToken);
     }
 
-    public query(): Observable<Repository> {
-        return super.query("viewer", {}, "repositories", REPOSITORY_FIELDS);
+    public query(organization: string): Observable<Repository> {
+        return super.query("organization", {login: organization}, "repositories", REPOSITORY_FIELDS);
     }
 }

@@ -50,17 +50,18 @@ function requestedField(requested, objectFields, cursor) {
         },
     };
 }
-function viewerOperation(requested, objectFields, cursor) {
+function baseOperation(base, baseArgs, requested, objectFields, cursor) {
     return {
-        name: "viewer",
+        name: base,
         fields: [
             requestedField(requested, objectFields, cursor),
         ],
+        args: baseArgs,
     };
 }
-function getQuery(requested, objectFields, cursor) {
+function getQuery(base, baseArgs, requested, objectFields, cursor) {
     return {
-        operation: viewerOperation(requested, objectFields, cursor),
+        operation: baseOperation(base, baseArgs, requested, objectFields, cursor),
     };
 }
 class List {
@@ -76,19 +77,19 @@ class List {
             useHttp2: false,
         };
     }
-    notify(requested, objectFields, subscriber) {
+    notify(base, baseArgs, requested, objectFields, subscriber) {
         return __awaiter(this, void 0, void 0, function* () {
             const options = this.getOptions();
             let hasMore = true;
             let cursor = NULL_ARG;
             while (hasMore) {
                 hasMore = false;
-                const response = yield (0, gotql_1.query)(this.endpoint, getQuery(requested, objectFields, cursor), options);
+                const response = yield (0, gotql_1.query)(this.endpoint, getQuery(base, baseArgs, requested, objectFields, cursor), options);
                 if (response.errors !== undefined) {
                     subscriber.error(response.errors);
                 }
                 else if (response.data !== undefined) {
-                    const edges = response.data.viewer[requested].edges;
+                    const edges = response.data[base][requested].edges;
                     const length = edges.length;
                     if (length > 0) {
                         hasMore = true;
@@ -107,9 +108,9 @@ class List {
             }
         });
     }
-    query(requested, objectFields) {
+    query(base, baseArgs, requested, objectFields) {
         return new rxjs_1.Observable(subscriber => {
-            this.notify(requested, objectFields, subscriber)
+            this.notify(base, baseArgs, requested, objectFields, subscriber)
                 .catch(subscriber.error.bind(subscriber));
         });
     }
