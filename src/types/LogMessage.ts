@@ -4,7 +4,8 @@ export interface LogMessageMeta extends Readonly<{
     source: string,
     repository: string,
     task: string,
-}> {}
+}> {
+}
 
 export function isLogMessageMeta(value: unknown): value is LogMessageMeta {
     if (!isObject(value)) return false;
@@ -20,4 +21,5 @@ export interface LogMessage extends Readonly<{
     level: string,
     message: string,
     meta: LogMessageMeta,
-}> {}
+}> {
+}

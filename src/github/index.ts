@@ -2,7 +2,7 @@ import {inject, singleton} from "tsyringe";
 import {ListGithubRepositories} from "./list/ListGithubRepositories";
 import {ListGithubOrganizations} from "./list/ListGithubOrganizations";
 import {ListGithubOrganizationRepositories} from "./list/ListGithubOrganizationRepositories";
-import {map, merge, mergeMap, Observable, reduce, tap} from "rxjs";
+import {map, merge, mergeMap, Observable, reduce} from "rxjs";
 import {GITHUB_CONFIG, GITHUB_REPOSITORY_DIRECTORIES} from "./symbols";
 import {without} from "lodash";
 import {resolve} from "path";
@@ -36,6 +36,14 @@ export class Github {
         @inject(GITHUB_CONFIG) private readonly githubConfig: GithubConfig,
         @inject(CONFIG) private readonly config: Config,
     ) {
+    }
+
+    public sync(): Observable<LogMessage> {
+        const repositories = this.getRepositories();
+        return merge(
+            this.syncRepositories(repositories),
+            this.removeUnmatchedRepositoryDirectories(repositories),
+        )
     }
 
     private getSshUrl(repositoryDirectory: string): string {
@@ -154,13 +162,5 @@ export class Github {
         ).pipe(
             map(githubRepository => githubRepository.nameWithOwner),
         );
-    }
-
-    public sync(): Observable<LogMessage> {
-        const repositories = this.getRepositories();
-        return merge(
-            this.syncRepositories(repositories),
-            this.removeUnmatchedRepositoryDirectories(repositories),
-        )
     }
 }

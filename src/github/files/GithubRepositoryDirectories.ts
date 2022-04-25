@@ -1,8 +1,8 @@
 import {inject, singleton} from "tsyringe";
 import {CONFIG} from "../../symbols";
 import {Config} from "../../types/Config";
-import {resolve, relative} from "path";
-import {readdirSync, lstatSync} from "fs";
+import {relative, resolve} from "path";
+import {lstatSync, readdirSync} from "fs";
 import {GITHUB_DIRECTORY} from "../constants";
 import {sync as mkdirpSync} from "mkdirp";
 
