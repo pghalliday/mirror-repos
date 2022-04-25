@@ -1,4 +1,5 @@
 export const CONTAINER_SYMBOLS = {
+    configFile: Symbol(),
     githubEndpoint: Symbol(),
-    githubAccessToken: Symbol(),
+    config: Symbol(),
 }
