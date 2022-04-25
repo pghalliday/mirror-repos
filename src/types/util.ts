@@ -34,3 +34,16 @@ export function assertBoolean(scope: string, value: unknown): asserts value is b
 export function assertString(scope: string, value: unknown): asserts value is string {
     if (typeof value !== 'string') throw new Error(`Invalid ${scope}: not a string`);
 }
+
+export function isObject(value: unknown): value is { [key: string]: unknown } {
+    if (typeof value !== 'object') return false;
+    return value !== null;
+}
+
+export function hasProperty<X extends { [key: string]: unknown }, Y extends PropertyKey>(object: X, prop: Y): object is X & Record<Y, unknown> {
+    return Object.prototype.hasOwnProperty.call(object, prop);
+}
+
+export function isString(value: unknown): value is string {
+    return typeof value === 'string';
+}
