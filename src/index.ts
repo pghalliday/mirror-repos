@@ -7,7 +7,7 @@ import {ListGithubOrganizationRepositories} from "./ListGithubOrganizationReposi
 import {merge, mergeMap} from "rxjs";
 import {ConfigLoader} from "./ConfigLoader";
 
-const CONFIG_FILE = process.argv[2] || "secrets.json";
+const CONFIG_FILE = process.argv[2] || "config.json";
 const ENDPOINT = "https://api.github.com/graphql";
 
 container.register(CONTAINER_SYMBOLS.githubEndpoint, {useValue: ENDPOINT});
