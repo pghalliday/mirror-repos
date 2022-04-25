@@ -1,6 +1,6 @@
 import {inject, singleton} from "tsyringe";
 import {Observable} from "rxjs";
-import {GITHUB_ORGANIZATION_FIELDS, GithubOrganization} from "./types/GithubGraphQLResponse";
+import {GITHUB_ORGANIZATION_FIELDS, GithubOrganization} from "../types/GithubGraphQLResponse";
 import {GithubList} from "./GithubList";
 import {GithubListQuery} from "./GithubListQuery";
 

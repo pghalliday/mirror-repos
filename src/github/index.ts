@@ -1,25 +1,31 @@
-import {DependencyContainer} from "tsyringe";
-import {ListGithubRepositories} from "./ListGithubRepositories";
-import {ListGithubOrganizations} from "./ListGithubOrganizations";
-import {ListGithubOrganizationRepositories} from "./ListGithubOrganizationRepositories";
+import {inject, singleton} from "tsyringe";
+import {ListGithubRepositories} from "./list/ListGithubRepositories";
+import {ListGithubOrganizations} from "./list/ListGithubOrganizations";
+import {ListGithubOrganizationRepositories} from "./list/ListGithubOrganizationRepositories";
 import {merge, mergeMap} from "rxjs";
-import {configure} from "./configure";
+import {GITHUB_INDEX} from "./tokens";
+import {GithubIndex} from "./types/GithubIndex";
 
-export function sync(container: DependencyContainer) {
-    configure(container);
+@singleton()
+export class Github {
+    constructor(
+        @inject(ListGithubRepositories) private readonly listGithubRepositories: ListGithubRepositories,
+        @inject(ListGithubOrganizations) private readonly listGithubOrganizations: ListGithubOrganizations,
+        @inject(ListGithubOrganizationRepositories) private readonly listGithubOrganizationRepositories: ListGithubOrganizationRepositories,
+        @inject(GITHUB_INDEX) private readonly githubIndex: GithubIndex,
+    ) {
+    }
 
-    const listRepositories = container.resolve(ListGithubRepositories);
-    const listOrganizations = container.resolve(ListGithubOrganizations);
-    const listOrganizationRepositories = container.resolve(ListGithubOrganizationRepositories);
-
-    merge(
-        listRepositories.query(),
-        listOrganizations.query().pipe(
-            mergeMap(organization => listOrganizationRepositories.query(organization.name))
-        ),
-    ).subscribe({
-        next: console.log,
-        error: console.error,
-        complete: () => console.log("complete"),
-    });
+    sync() {
+        merge(
+            this.listGithubRepositories.query(),
+            this.listGithubOrganizations.query().pipe(
+                mergeMap(organization => this.listGithubOrganizationRepositories.query(organization.name))
+            ),
+        ).subscribe({
+            next: console.log,
+            error: console.error,
+            complete: () => console.log("complete"),
+        });
+    }
 }

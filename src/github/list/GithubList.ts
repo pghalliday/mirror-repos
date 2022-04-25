@@ -1,12 +1,12 @@
 import {Observable, Subscriber} from "rxjs";
 import {ArgObject} from "gotql/dist/types/QueryType";
 import {UserOptions} from "gotql/dist/types/UserOptions";
-import {GithubGraphQLResponse} from "./types/GithubGraphQLResponse";
+import {GithubGraphQLResponse} from "../types/GithubGraphQLResponse";
 import {query} from "gotql";
 import {inject, singleton} from "tsyringe";
 import {GithubListQuery, NULL_ARG} from "./GithubListQuery";
-import {GithubConfig} from "./types/GithubConfig";
-import {GITHUB_CONFIG} from "./tokens";
+import {GithubConfig} from "../types/GithubConfig";
+import {GITHUB_CONFIG} from "../tokens";
 
 @singleton()
 export class GithubList {
