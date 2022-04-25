@@ -43,7 +43,7 @@ export class GithubList {
         while (hasMore) {
             hasMore = false;
             const response: GithubGraphQLResponse<ObjectType> = await query(
-                this.githubConfig.endpoint,
+                this.githubConfig.graphQLEndpoint,
                 githubListQuery.get(cursor),
                 options,
             );

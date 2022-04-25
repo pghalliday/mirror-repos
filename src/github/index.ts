@@ -3,7 +3,7 @@ import {ListGithubRepositories} from "./list/ListGithubRepositories";
 import {ListGithubOrganizations} from "./list/ListGithubOrganizations";
 import {ListGithubOrganizationRepositories} from "./list/ListGithubOrganizationRepositories";
 import {map, merge, mergeMap, Observable, reduce, tap} from "rxjs";
-import {GITHUB_REPOSITORY_DIRECTORIES} from "./symbols";
+import {GITHUB_CONFIG, GITHUB_REPOSITORY_DIRECTORIES} from "./symbols";
 import {without} from "lodash";
 import {resolve} from "path";
 import {sync as rimrafSync} from "rimraf";
@@ -11,10 +11,7 @@ import {CONFIG} from "../symbols";
 import {Config} from "../types/Config";
 import {GITHUB_DIRECTORY} from "./constants";
 import simpleGit, {SimpleGit, SimpleGitOptions} from "simple-git";
-
-function getSshUrl(repositoryDirectory: string): string {
-    return `git@github.com:${repositoryDirectory}.git`;
-}
+import {GithubConfig} from "./types/GithubConfig";
 
 function getMessageMethod(repositoryDirectory: string, task: string): (message: string) => string {
     return message => `${repositoryDirectory} : ${task} : ${message}`;
@@ -27,8 +24,13 @@ export class Github {
         @inject(ListGithubOrganizations) private readonly listGithubOrganizations: ListGithubOrganizations,
         @inject(ListGithubOrganizationRepositories) private readonly listGithubOrganizationRepositories: ListGithubOrganizationRepositories,
         @inject(GITHUB_REPOSITORY_DIRECTORIES) private readonly githubRepositoryDirectories: readonly string[],
+        @inject(GITHUB_CONFIG) private readonly githubConfig: GithubConfig,
         @inject(CONFIG) private readonly config: Config,
     ) {
+    }
+
+    private getSshUrl(repositoryDirectory: string): string {
+        return `${this.githubConfig.sshEndpoint}:${repositoryDirectory}.git`;
     }
 
     private getRepositoryPath(repositoryDirectory: string): string {
@@ -76,7 +78,7 @@ export class Github {
         const git: SimpleGit = simpleGit(options);
         return new Observable<string>(subscriber => {
             subscriber.next(getMessage("start"));
-            git.mirror(getSshUrl(repositoryDirectory), path)
+            git.mirror(this.getSshUrl(repositoryDirectory), path)
                 .then(response => {
                     response.split("\n")
                         .map(line => line.trim())
