@@ -10,6 +10,8 @@ Script to mirror all repos from a github account.
 ```json
 {
   "outputDirectory": "output",
+  "logFile": "mirror-repos.log",
+  "logLevel": "info",
   "github": {
     "graphQLEndpoint": "https://api.github.com/graphql",
     "sshEndpoint": "git@github.com",
