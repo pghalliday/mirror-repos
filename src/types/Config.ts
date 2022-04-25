@@ -1,9 +1,9 @@
 import {assertObject, assertProperty, assertString} from "./util";
 
-export type GithubConfig = Readonly<{
+export interface GithubConfig extends Readonly<{
     endpoint: string,
     personalAccessToken: string,
-}>;
+}> {}
 
 export function assertGithubConfig(scope: string, value: unknown): asserts value is GithubConfig {
     assertObject(scope, value);
@@ -13,9 +13,9 @@ export function assertGithubConfig(scope: string, value: unknown): asserts value
     assertString(`${scope}.endpoint`, value.endpoint);
 }
 
-export type Config = Readonly<{
+export interface Config extends Readonly<{
     github: GithubConfig,
-}>;
+}> {}
 
 export function assertConfig(scope: string, value: unknown): asserts value is Config {
     assertObject(scope, value);

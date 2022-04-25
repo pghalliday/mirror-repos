@@ -15,7 +15,7 @@ export interface GithubOrganization extends Readonly<Record<typeof GITHUB_ORGANI
 export interface GithubRepository extends Readonly<Record<typeof GITHUB_REPOSITORY_FIELDS[number], string>> {
 }
 
-export type GithubGraphQLError = {
+export interface GithubGraphQLError {
     path: string[],
     extensions: {
         code: string,
@@ -27,18 +27,20 @@ export type GithubGraphQLError = {
         column: number,
     }[],
     message: string,
-};
+}
 
-export type GithubGraphQLEdge<ObjectType> = {
-    cursor: string,
-    node: ObjectType,
-};
-
-export type GithubGraphQLEdges<ObjectType> = {
-    edges: GithubGraphQLEdge<ObjectType>[],
-};
-
-export type GithubGraphQLResponse<ObjectType> = {
-    data?: Record<string, Record<string, GithubGraphQLEdges<ObjectType>>>,
+export interface GithubGraphQLResponse<ObjectType> {
+    data?: Record<
+        string,
+        Record<
+            string,
+            {
+                edges: {
+                    cursor: string,
+                    node: ObjectType,
+                }[],
+            }
+        >
+    >,
     errors?: GithubGraphQLError[],
-};
+}
