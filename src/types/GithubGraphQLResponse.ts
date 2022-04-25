@@ -5,7 +5,7 @@ export const GITHUB_ORGANIZATION_FIELDS = [
 
 export const GITHUB_REPOSITORY_FIELDS = [
     "id",
-    "name",
+    "nameWithOwner",
     "sshUrl",
 ] as const;
 
