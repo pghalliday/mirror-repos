@@ -50,7 +50,7 @@ export class Github {
         const git: SimpleGit = simpleGit(options);
         return new Observable<string>(subscriber => {
             subscriber.next(getMessage("start"));
-            git.remote(["update", "--prune"])
+            git.remote(["--verbose", "update", "--prune"])
                 .then(response => {
                     if (response !== undefined) {
                         response.split("\n")
