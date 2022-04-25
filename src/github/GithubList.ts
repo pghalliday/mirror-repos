@@ -4,14 +4,14 @@ import {UserOptions} from "gotql/dist/types/UserOptions";
 import {GithubGraphQLResponse} from "./types/GithubGraphQLResponse";
 import {query} from "gotql";
 import {inject, singleton} from "tsyringe";
-import {CONTAINER_SYMBOLS} from "./types/ContainerSymbols";
 import {GithubListQuery, NULL_ARG} from "./GithubListQuery";
-import {GithubConfig} from "./types/Config";
+import {GithubConfig} from "./types/GithubConfig";
+import {GITHUB_CONFIG} from "./tokens";
 
 @singleton()
 export class GithubList {
     constructor(
-        @inject(CONTAINER_SYMBOLS.githubConfig) private readonly githubConfig: GithubConfig,
+        @inject(GITHUB_CONFIG) private readonly githubConfig: GithubConfig,
     ) {
     }
 
