@@ -3,7 +3,7 @@ import {ListGithubRepositories} from "./list/ListGithubRepositories";
 import {ListGithubOrganizations} from "./list/ListGithubOrganizations";
 import {ListGithubOrganizationRepositories} from "./list/ListGithubOrganizationRepositories";
 import {merge, mergeMap} from "rxjs";
-import {GITHUB_INDEX} from "./tokens";
+import {GITHUB_INDEX} from "./symbols";
 import {GithubIndex} from "./types/GithubIndex";
 
 @singleton()

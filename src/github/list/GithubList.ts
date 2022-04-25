@@ -6,7 +6,7 @@ import {query} from "gotql";
 import {inject, singleton} from "tsyringe";
 import {GithubListQuery, NULL_ARG} from "./GithubListQuery";
 import {GithubConfig} from "../types/GithubConfig";
-import {GITHUB_CONFIG} from "../tokens";
+import {GITHUB_CONFIG} from "../symbols";
 
 @singleton()
 export class GithubList {

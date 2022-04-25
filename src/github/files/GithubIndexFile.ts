@@ -5,7 +5,7 @@ import {assertGithubIndex, GithubIndex} from "../types/GithubIndex";
 import {join} from "path";
 import {INDEX_JSON} from "../../constants";
 import {GITHUB_DIRECTORY} from "../constants";
-import {CONFIG} from "../../tokens";
+import {CONFIG} from "../../symbols";
 
 @singleton()
 export class GithubIndexFile {

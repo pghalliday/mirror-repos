@@ -1,7 +1,7 @@
 import {inject, singleton} from "tsyringe";
 import {assertConfig, Config} from "../types/Config";
 import {readFileSync} from "fs";
-import {CONFIG_FILE_PATH} from "../tokens";
+import {CONFIG_FILE_PATH} from "../symbols";
 
 @singleton()
 export class ConfigFile {
