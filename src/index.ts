@@ -1,21 +1,22 @@
 import "reflect-metadata";
-import {container} from "tsyringe";
+import {container, instanceCachingFactory} from "tsyringe";
 import {CONTAINER_SYMBOLS} from "./types/ContainerSymbols";
 import {ListGithubRepositories} from "./ListGithubRepositories";
 import {ListGithubOrganizations} from "./ListGithubOrganizations";
 import {ListGithubOrganizationRepositories} from "./ListGithubOrganizationRepositories";
 import {merge, mergeMap} from "rxjs";
 import {ConfigLoader} from "./ConfigLoader";
+import {Config, GithubConfig} from "./types/Config";
 
 const CONFIG_FILE = process.argv[2] || "config.json";
-const ENDPOINT = "https://api.github.com/graphql";
 
-container.register(CONTAINER_SYMBOLS.githubEndpoint, {useValue: ENDPOINT});
 container.register(CONTAINER_SYMBOLS.configFile, {useValue: CONFIG_FILE});
-
-const configLoader = container.resolve(ConfigLoader);
-
-container.register(CONTAINER_SYMBOLS.config, {useValue: configLoader.load()});
+container.register(CONTAINER_SYMBOLS.config, {
+    useFactory: instanceCachingFactory<Config>(c => c.resolve(ConfigLoader).load())
+});
+container.register(CONTAINER_SYMBOLS.githubConfig, {
+    useFactory: instanceCachingFactory<GithubConfig>(c => c.resolve<Config>(CONTAINER_SYMBOLS.config).github)
+});
 
 const listRepositories = container.resolve(ListGithubRepositories);
 const listOrganizations = container.resolve(ListGithubOrganizations);

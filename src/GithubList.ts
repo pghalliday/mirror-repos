@@ -6,13 +6,12 @@ import {query} from "gotql";
 import {inject, singleton} from "tsyringe";
 import {CONTAINER_SYMBOLS} from "./types/ContainerSymbols";
 import {GithubListQuery, NULL_ARG} from "./GithubListQuery";
-import {Config} from "./types/Config";
+import {GithubConfig} from "./types/Config";
 
 @singleton()
 export class GithubList {
     constructor(
-        @inject(CONTAINER_SYMBOLS.githubEndpoint) private readonly endpoint: string,
-        @inject(CONTAINER_SYMBOLS.config) private readonly config: Config,
+        @inject(CONTAINER_SYMBOLS.githubConfig) private readonly githubConfig: GithubConfig,
     ) {
     }
 
@@ -28,7 +27,7 @@ export class GithubList {
     private getOptions(): UserOptions {
         return {
             headers: {
-                Authorization: "Bearer " + this.config.github.personalAccessToken,
+                Authorization: "Bearer " + this.githubConfig.personalAccessToken,
             },
             useHttp2: false,
         };
@@ -44,7 +43,7 @@ export class GithubList {
         while (hasMore) {
             hasMore = false;
             const response: GithubGraphQLResponse<ObjectType> = await query(
-                this.endpoint,
+                this.githubConfig.endpoint,
                 githubListQuery.get(cursor),
                 options,
             );
