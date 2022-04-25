@@ -5,4 +5,8 @@ import {Github} from "./github";
 
 configure(container, process.argv[2] || "config.json");
 const github = container.resolve(Github);
-github.sync();
+github.sync().subscribe({
+    next: console.log,
+    error: console.error,
+    complete: () => console.log("complete"),
+});

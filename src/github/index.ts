@@ -2,9 +2,12 @@ import {inject, singleton} from "tsyringe";
 import {ListGithubRepositories} from "./list/ListGithubRepositories";
 import {ListGithubOrganizations} from "./list/ListGithubOrganizations";
 import {ListGithubOrganizationRepositories} from "./list/ListGithubOrganizationRepositories";
-import {merge, mergeMap} from "rxjs";
+import {merge, mergeMap, Observable, reduce} from "rxjs";
 import {GITHUB_INDEX} from "./symbols";
 import {GithubIndex} from "./types/GithubIndex";
+import {Record} from "./types/Record";
+import {GithubRepository} from "./types/GithubGraphQLResponse";
+import {isEqual, without} from "lodash";
 
 @singleton()
 export class Github {
@@ -16,16 +19,32 @@ export class Github {
     ) {
     }
 
-    sync() {
-        merge(
+    private getUpdated(updated: readonly GithubRepository[], githubRepository: GithubRepository): readonly GithubRepository[] {
+        const existing = this.githubIndex[githubRepository.id];
+        if (existing === undefined || !isEqual(existing, githubRepository)) {
+            return [...updated, githubRepository];
+        }
+        return updated;
+    }
+
+    private record(record: Record, githubRepository: GithubRepository): Record {
+        return {
+            remainingIds: without(record.remainingIds, githubRepository.id),
+            updated: this.getUpdated(record.updated, githubRepository),
+        }
+    }
+
+    public sync(): Observable<Record> {
+        return merge(
             this.listGithubRepositories.query(),
             this.listGithubOrganizations.query().pipe(
-                mergeMap(organization => this.listGithubOrganizationRepositories.query(organization.name))
+                mergeMap(organization => this.listGithubOrganizationRepositories.query(organization.name)),
             ),
-        ).subscribe({
-            next: console.log,
-            error: console.error,
-            complete: () => console.log("complete"),
-        });
+        ).pipe(
+            reduce(this.record.bind(this), {
+                remainingIds: Object.keys(this.githubIndex),
+                updated: [],
+            }),
+        );
     }
 }
