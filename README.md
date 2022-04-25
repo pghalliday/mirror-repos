@@ -4,6 +4,7 @@ Script to mirror all repos from a github account.
 
 # Usage
 
+- Add an SSH key for your current user to your GitHub account 
 - Create a GitHub Personal Access Token with `read:user` and `read:org` scopes.
 - Create a `config.json` file with the following contents:
 
