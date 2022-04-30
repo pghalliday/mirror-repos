@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Mirror repositories from a github account",
   "main": "./lib/index.js",
   "bin": "./bin/index.js",
