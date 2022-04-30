@@ -1,17 +1,26 @@
 {
-  "name": "mirror-repos",
+  "name": "@pghalliday/mirror-repos",
+  "publishConfig": {
+    "access": "public"
+  },
   "version": "1.0.0",
   "description": "Mirror repositories from a github account",
-  "main": "index.js",
+  "main": "./lib/index.js",
+  "bin": "./lib/bin.js",
+  "files": [
+    "lib/**/*"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rimraf lib",
     "prebuild": "npm run clean",
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "node lib/index.js"
+    "start": "node lib/bin.js",
+    "prepublish": "npm run build"
   },
-  "author": "",
+  "author": "Peter Halliday <pghalliday@gmail.com> (https://pghalliday.com)",
+  "repository": "github:pghalliday/mirror-repos",
   "license": "ISC",
   "dependencies": {
     "gotql": "^2.1.0-alpha1",
