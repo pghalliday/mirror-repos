@@ -14,7 +14,7 @@ import simpleGit, {SimpleGit} from "simple-git";
 import {GithubConfig} from "./types/GithubConfig";
 import {LogMessage} from "../types/LogMessage";
 
-const GIT_SSH_COMMAND = "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no";
+const GIT_SSH_COMMAND_NO_HOST_KEY_CHECKING = "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no";
 
 function getLogMessageMethod(repository: string, task: string): (level: string, message: string) => LogMessage {
     return (level, message) => ({
@@ -49,13 +49,14 @@ export class Github {
     }
 
     private getGit(baseDir: string): SimpleGit {
+        const env = this.config.strictHostKeyChecking ? {} : {
+            "GIT_SSH_COMMAND": GIT_SSH_COMMAND_NO_HOST_KEY_CHECKING,
+        };
         return simpleGit({
             baseDir,
             binary: this.config.gitBinary,
             maxConcurrentProcesses: 6,
-        }).env({
-            "GIT_SSH_COMMAND": GIT_SSH_COMMAND,
-        });
+        }).env(env);
     }
 
     private getSshUrl(repositoryDirectory: string): string {

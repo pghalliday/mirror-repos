@@ -20,6 +20,7 @@ npm install -g @pghalliday/mirror-repos
   "logFile": "mirror-repos.log",
   "logLevel": "info",
   "gitBinary": "git",
+  "strictHostKeyChecking": true,
   "github": {
     "graphQLEndpoint": "https://api.github.com/graphql",
     "sshEndpoint": "git@github.com",
