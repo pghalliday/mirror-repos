@@ -3,12 +3,13 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Mirror repositories from a github account",
   "main": "./lib/index.js",
-  "bin": "./lib/bin.js",
+  "bin": "./bin/index.js",
   "files": [
-    "lib/**/*"
+    "lib/**/*",
+    "bin/**/*"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
