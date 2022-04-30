@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Mirror repositories from a github account",
   "main": "./lib/index.js",
   "bin": "./bin/index.js",
@@ -18,7 +18,7 @@
     "build": "tsc",
     "prestart": "npm run build",
     "start": "node lib/bin.js",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "author": "Peter Halliday <pghalliday@gmail.com> (https://pghalliday.com)",
   "repository": "github:pghalliday/mirror-repos",
