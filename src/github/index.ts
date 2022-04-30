@@ -10,7 +10,7 @@ import {sync as rimrafSync} from "rimraf";
 import {CONFIG} from "../symbols";
 import {Config} from "../types/Config";
 import {GITHUB_DIRECTORY} from "./constants";
-import simpleGit, {SimpleGit, SimpleGitOptions} from "simple-git";
+import simpleGit, {SimpleGit} from "simple-git";
 import {GithubConfig} from "./types/GithubConfig";
 import {LogMessage} from "../types/LogMessage";
 
@@ -40,18 +40,22 @@ export class Github {
     ) {
     }
 
-    private static getGit(options: Partial<SimpleGitOptions>): SimpleGit {
-        return simpleGit(options).env({
-            "GIT_SSH_COMMAND": GIT_SSH_COMMAND,
-        });
-    }
-
     public sync(): Observable<LogMessage> {
         const repositories = this.getRepositories();
         return merge(
             this.syncRepositories(repositories),
             this.removeUnmatchedRepositoryDirectories(repositories),
         )
+    }
+
+    private getGit(baseDir: string): SimpleGit {
+        return simpleGit({
+            baseDir,
+            binary: this.config.gitBinary,
+            maxConcurrentProcesses: 6,
+        }).env({
+            "GIT_SSH_COMMAND": GIT_SSH_COMMAND,
+        });
     }
 
     private getSshUrl(repositoryDirectory: string): string {
@@ -69,12 +73,7 @@ export class Github {
     private updateRepositoryDirectory(repositoryDirectory: string): Observable<LogMessage> {
         const getLogMessage = getLogMessageMethod(repositoryDirectory, "UPDATE");
         const path = this.getRepositoryPath(repositoryDirectory);
-        const options: Partial<SimpleGitOptions> = {
-            baseDir: path,
-            binary: 'git',
-            maxConcurrentProcesses: 6,
-        };
-        const git: SimpleGit = Github.getGit(options);
+        const git: SimpleGit = this.getGit(path);
         return new Observable<LogMessage>(subscriber => {
             subscriber.next(getLogMessage("info", "start"));
             git.remote(["--verbose", "update", "--prune"])
@@ -95,12 +94,7 @@ export class Github {
     private mirrorRepositoryDirectory(repositoryDirectory: string): Observable<LogMessage> {
         const getLogMessage = getLogMessageMethod(repositoryDirectory, "MIRROR");
         const path = this.getRepositoryPath(repositoryDirectory);
-        const options: Partial<SimpleGitOptions> = {
-            baseDir: process.cwd(),
-            binary: 'git',
-            maxConcurrentProcesses: 6,
-        };
-        const git: SimpleGit = Github.getGit(options);
+        const git: SimpleGit = this.getGit(process.cwd());
         return new Observable<LogMessage>(subscriber => {
             subscriber.next(getLogMessage("info", "start"));
             git.mirror(this.getSshUrl(repositoryDirectory), path)
