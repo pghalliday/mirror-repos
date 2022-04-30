@@ -14,6 +14,8 @@ import simpleGit, {SimpleGit, SimpleGitOptions} from "simple-git";
 import {GithubConfig} from "./types/GithubConfig";
 import {LogMessage} from "../types/LogMessage";
 
+const GIT_SSH_COMMAND = "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no";
+
 function getLogMessageMethod(repository: string, task: string): (level: string, message: string) => LogMessage {
     return (level, message) => ({
         level,
@@ -36,6 +38,12 @@ export class Github {
         @inject(GITHUB_CONFIG) private readonly githubConfig: GithubConfig,
         @inject(CONFIG) private readonly config: Config,
     ) {
+    }
+
+    private static getGit(options: Partial<SimpleGitOptions>): SimpleGit {
+        return simpleGit(options).env({
+            "GIT_SSH_COMMAND": GIT_SSH_COMMAND,
+        });
     }
 
     public sync(): Observable<LogMessage> {
@@ -66,7 +74,7 @@ export class Github {
             binary: 'git',
             maxConcurrentProcesses: 6,
         };
-        const git: SimpleGit = simpleGit(options);
+        const git: SimpleGit = Github.getGit(options);
         return new Observable<LogMessage>(subscriber => {
             subscriber.next(getLogMessage("info", "start"));
             git.remote(["--verbose", "update", "--prune"])
@@ -92,7 +100,7 @@ export class Github {
             binary: 'git',
             maxConcurrentProcesses: 6,
         };
-        const git: SimpleGit = simpleGit(options);
+        const git: SimpleGit = Github.getGit(options);
         return new Observable<LogMessage>(subscriber => {
             subscriber.next(getLogMessage("info", "start"));
             git.mirror(this.getSshUrl(repositoryDirectory), path)
