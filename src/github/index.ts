@@ -2,7 +2,7 @@ import {inject, singleton} from "tsyringe";
 import {ListGithubRepositories} from "./list/ListGithubRepositories";
 import {ListGithubOrganizations} from "./list/ListGithubOrganizations";
 import {ListGithubOrganizationRepositories} from "./list/ListGithubOrganizationRepositories";
-import {map, merge, mergeMap, Observable, reduce} from "rxjs";
+import {distinct, map, merge, mergeMap, Observable, reduce} from "rxjs";
 import {GITHUB_CONFIG, GITHUB_REPOSITORY_DIRECTORIES} from "./symbols";
 import {without} from "lodash";
 import {resolve} from "path";
@@ -161,6 +161,8 @@ export class Github {
             ),
         ).pipe(
             map(githubRepository => githubRepository.nameWithOwner),
+            // Sometimes we get a duplicate and I'm not sure why
+            distinct(),
         );
     }
 }
